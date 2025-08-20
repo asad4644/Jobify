@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Dream Job - Jobify</title>
+    <!-- SEO Meta Tags for AdSense Friendliness -->
+    <meta name="description" content="Jobify helps you find your dream job in India. Explore thousands of job listings across IT, Finance, Marketing, and more. Post jobs and connect with top talent.">
+    <meta name="keywords" content="jobs in India, job search, IT jobs, finance jobs, marketing jobs, remote jobs India, career opportunities, job listings, post a job, employment India">
+    <meta name="robots" content="index, follow">
+    <!-- A real sitemap would be an XML file, but this meta tag is a good practice for single-page apps -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- LottieFiles CDN for animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for animations and specific elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth; /* Smooth scroll for anchor links */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        /* Custom 3D hover effect for job cards */
+        .job-card-3d-effect {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .job-card-3d-effect:hover {
+            transform: perspective(1000px) rotateY(10deg); /* Updated 3D hover effect */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Scroll-based animations */
+        .animate-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .animate-fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .animate-slide-up.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Custom animation for How It Works icons */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .icon-bounce:hover {
+            animation: bounce-subtle 0.6s ease-in-out infinite;
+        }
+
+        /* Custom button styles */
+        .btn-primary {
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #8b5cf6, #6366f1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #c7d2fe;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(199, 210, 254, 0.4);
+        }
+
+        /* Custom Message Box Styles */
+        #messageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #messageBox.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #messageBox.success {
+            background-color: #d1fae5; /* green-100 */
+            color: #065f46; /* green-800 */
+            border: 1px solid #34d399; /* green-400 */
+        }
+
+        #messageBox.error {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+            border: 1px solid #ef4444; /* red-400 */
+        }
+
+        /* Hidden sections for policy pages */
+        .policy-section {
+            display: none;
+        }
+
+        .policy-section.active {
+            display: block;
+        }
+
+        /* Back to Top Button */
+        #backToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #6366f1;
+            color: white;
+            border-radius: 50%;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+        }
+
+        #backToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Floating WhatsApp Channel Button */
+        #whatsappChannelBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px; /* Position on the left side */
+            background-color: #25D366; /* WhatsApp green */
+            color: white;
+            border-radius: 50%;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            z-index: 999;
+        }
+
+        #whatsappChannelBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* AdSense Placeholder Styling (for visual representation) */
+        .adsense-placeholder {
+            background-color: #f0f0f0;
+            border: 1px dashed #ccc;
+            text-align: center;
+            padding: 20px;
+            margin: 20px auto;
+            color: #888;
+            font-size: 0.9rem;
+            max-width: 728px; /* Common ad unit size */
+            height: 90px; /* Common ad unit size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Responsive adjustments for ad placeholders */
+        @media (max-width: 768px) {
+            .adsense-placeholder {
+                max-width: 320px; /* Mobile ad unit size */
+                height: 50px;
+            }
+        }
+
+        /* Blog Card Styling */
+        .blog-card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            overflow: hidden; /* Ensures image corners are rounded */
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 200px; /* Fixed height for consistency */
+            object-fit: cover; /* Ensures image covers the area without distortion */
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Custom Message Box -->
+    <div id="messageBox" class="hidden">
+        <span id="messageText"></span>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="bg-white shadow-sm py-4 sticky top-0 z-50">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-indigo-600">Jobify</a>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#hero" class="text-gray-600 hover:text-indigo-600 transition-colors main-nav-link">Home</a>
+                <a href="#jobs" class="text-gray-600 hover:text-indigo-600 transition-colors main-nav-link">Jobs</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-indigo-600 transition-colors main-nav-link">Testimonials</a>
+                <a href="#how-it-works" class="text-gray-600 hover:text-indigo-600 transition-colors main-nav-link">How It Works</a>
+                <a href="#blogs" class="text-gray-600 hover:text-indigo-600 transition-colors main-nav-link">Blogs</a>
+                <button id="postJobBtnNav" class="btn-primary text-white px-5 py-2 rounded-full font-medium shadow-lg">Post a Job</button>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white py-2 shadow-md">
+            <a href="#hero" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors mobile-nav-link">Home</a>
+            <a href="#jobs" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors mobile-nav-link">Jobs</a>
+            <a href="#testimonials" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors mobile-nav-link">Testimonials</a>
+            <a href="#how-it-works" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors mobile-nav-link">How It Works</a>
+            <a href="#blogs" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors mobile-nav-link">Blogs</a>
+            <button id="postJobBtnMobile" class="block w-full text-left px-4 py-2 text-indigo-600 hover:bg-gray-100 transition-colors">Post a Job</button>
+        </div>
+    </header>
+
+    
+
+    <!-- Main Content Sections -->
+    <div id="mainContent">
+        <!-- Hero Section -->
+        <section id="hero" class="relative bg-gradient-to-br from-indigo-50 to-purple-100 py-20 md:py-32 overflow-hidden animate-fade-in">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+                <div class="text-center md:text-left md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                        Find Your <span class="text-indigo-600">Dream Job</span> Today
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-lg mx-auto md:mx-0">
+                        Explore thousands of job opportunities from top companies and kickstart your career.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#jobs" class="btn-primary text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            Explore Jobs
+                        </a>
+                        <button id="postJobBtnHero" class="btn-secondary px-8 py-3 rounded-full font-semibold shadow-md hover:shadow-lg transition-all duration-300">
+                            Post a Job
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center items-center relative z-10">
+                    <!-- Lottie Animation for Hero Section -->
+                    <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_q0x5r6c0.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 100%; max-width: 500px; height: auto;"
+                        loop
+                        autoplay>
+                    </lottie-player>
+                </div>
+            </div>
+            <!-- Background decorative elements -->
+            <div class="absolute top-0 left-0 w-48 h-48 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+            <div class="absolute bottom-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        </section>
+
+        <!-- Search & Filter Section -->
+        <section id="search-filter" class="py-16 bg-white shadow-inner animate-slide-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-10">Find Your Next Opportunity</h2>
+                <div class="bg-white p-6 rounded-xl shadow-lg max-w-4xl mx-auto flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center">
+                    <input type="text" id="jobTitleSearch" placeholder="Job Title, Keywords..." class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+                    <select id="locationFilter" class="w-full md:w-auto p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+                        <option value="">All Locations</option>
+                        <option value="Bengaluru">Bengaluru</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Remote">Remote (India)</option>
+                    </select>
+                    <select id="categoryFilter" class="w-full md:w-auto p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+                        <option value="">All Categories</option>
+                        <option value="IT">IT</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Human Resources">Human Resources</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                    <button id="searchJobsBtn" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 w-full md:w-auto">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Job Listings Section -->
+        <section id="jobs" class="py-16 bg-gray-50 animate-slide-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-10">Featured Job Listings</h2>
+                <div id="jobListings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Job cards will be injected here by JavaScript -->
+                </div>
+                <div id="noJobsFound" class="hidden text-center text-gray-600 text-lg mt-10">
+                    No jobs found matching your criteria.
+                </div>
+            </div>
+        </section>
+
+        <!-- AdSense Placeholder: Mid-Content Ad -->
+        <div class="adsense-placeholder" id="adsenseMidContent">
+            <!-- AdSense Ad Unit Placeholder - Replace with your actual AdSense code -->
+            <span><ins style="width: 300px;height:250px" data-width="300" data-height="250" class="x63aea4c802" data-domain="//data684.click" data-affquery="/acddae232a0f0b274fc6/63aea4c802/?placementName=default"><script src="//data684.click/js/responsive.js" async></script></ins></span>
+        </div>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="py-16 bg-gradient-to-br from-purple-50 to-indigo-50 animate-slide-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-10">What Our Users Say</h2>
+                <div class="relative max-w-3xl mx-auto">
+                    <div id="testimonialCarousel" class="overflow-hidden rounded-xl shadow-lg bg-white p-8">
+                        <div id="testimonialContainer" class="flex transition-transform duration-500 ease-in-out">
+                            <!-- Testimonials will be injected here by JavaScript -->
+                        </div>
+                    </div>
+                    <button id="prevTestimonial" class="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button id="nextTestimonial" class="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-16 bg-white animate-slide-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">How It Works</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                        <div class="w-24 h-24 mb-6 flex items-center justify-center bg-indigo-100 rounded-full icon-bounce">
+                            <svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">1. Search for Jobs</h3>
+                        <p class="text-gray-600">Easily browse and filter thousands of job listings by title, location, and category.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                        <div class="w-24 h-24 mb-6 flex items-center justify-center bg-purple-100 rounded-full icon-bounce">
+                            <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">2. Apply with Ease</h3>
+                        <p class="text-gray-600">Submit your applications directly through our platform with just a few clicks.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                        <div class="w-24 h-24 mb-6 flex items-center justify-center bg-green-100 rounded-full icon-bounce">
+                            <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">3. Land Your Dream Job</h3>
+                        <p class="text-gray-600">Connect with top employers and secure the job you've always wanted.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blogs Section -->
+        <section id="blogs" class="py-16 bg-gray-50 animate-slide-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-10">Our Latest Blogs</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Blog Post 1 -->
+                    <div class="blog-card">
+                        <img src="https://placehold.co/600x400/818CF8/ffffff?text=Career+Tips" alt="Career Tips Blog Image">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Top 5 Tips for a Successful Job Interview</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">Mastering the job interview is crucial for landing your dream role. Here are five essential tips to help you shine and make a lasting impression on potential employers...</p>
+                            <a href="javascript:void(0)" onclick="showMessage('Full blog post content is a placeholder. More coming soon!', 'success');" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-sm hover:shadow-md transition-all duration-300">Read More</a>
+                        </div>
+                    </div>
+                    <!-- Blog Post 2 -->
+                    <div class="blog-card">
+                        <img src="https://placehold.co/600x400/A78BFA/ffffff?text=Remote+Work" alt="Remote Work Blog Image">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">The Rise of Remote Work: Opportunities in India</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">Remote work has transformed the employment landscape, offering unprecedented flexibility and opportunities. Discover how the remote work trend is growing in India...</p>
+                            <a href="javascript:void(0)" onclick="showMessage('Full blog post content is a placeholder. More coming soon!', 'success');" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-sm hover:shadow-md transition-all duration-300">Read More</a>
+                        </div>
+                    </div>
+                    <!-- Blog Post 3 -->
+                    <div class="blog-card">
+                        <img src="https://placehold.co/600x400/6EE7B7/ffffff?text=Skill+Development" alt="Skill Development Blog Image">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Essential Skills for the Modern Workforce</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">The job market is constantly evolving, requiring professionals to adapt and acquire new skills. Learn about the most in-demand skills that can boost your career prospects...</p>
+                            <a href="javascript:void(0)" onclick="showMessage('Full blog post content is a placeholder. More coming soon!', 'success');" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-sm hover:shadow-md transition-all duration-300">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Subscription -->
+        <section id="newsletter" class="py-16 bg-indigo-600 text-white animate-fade-in">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">Stay Updated with New Job Listings!</h2>
+                <p class="text-lg mb-8">Subscribe to our newsletter and get the latest job alerts directly to your inbox.</p>
+                <div class="max-w-md mx-auto flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <input type="email" id="newsletterEmail" placeholder="Enter your email address" class="flex-1 p-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-indigo-300 focus:border-transparent transition-all duration-200">
+                    <button id="subscribeBtn" class="btn-secondary text-indigo-800 px-6 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300">Subscribe</button>
+                </div>
+                <p id="newsletterMessage" class="mt-4 text-sm"></p>
+            </div>
+        </section>
+    </div> <!-- End of #mainContent -->
+
+    <!-- AdSense Placeholder: Bottom Banner -->
+    <div class="adsense-placeholder" id="adsenseBottomBanner">
+        <!-- AdSense Ad Unit Placeholder - Replace with your actual AdSense code -->
+        <span><ins style="width: 320px;height:50px" data-width="320" data-height="50" class="f75adc89521" data-domain="//data684.click" data-affquery="/5462a0791a421d095b33/75adc89521/?placementName=default"><script src="//data684.click/js/responsive.js" async></script></ins></span>
+    </div>
+
+    <!-- Policy Pages Sections (Initially Hidden) -->
+    <section id="aboutUs" class="policy-section py-16 bg-white hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">About Us</h2>
+            <div class="prose max-w-3xl mx-auto text-gray-700">
+                <p>Welcome to Jobify, your premier destination for connecting talented individuals with leading companies across India. Our mission is to simplify the job search process and empower career growth for everyone.</p>
+                <p>Founded in 2025, Jobify was created with the vision of bridging the gap between job seekers and employers. We understand the challenges of finding the right fit, and we are dedicated to providing a seamless, efficient, and transparent platform.</p>
+                <p>We believe in the power of opportunity and strive to offer a diverse range of job listings, from entry-level positions to executive roles, across various industries. Our platform is designed with user-friendliness in mind, ensuring that both job seekers and recruiters have a positive and productive experience.</p>
+                <p>At Jobify, we are committed to continuous innovation, leveraging technology to enhance your job search and recruitment efforts. Join our growing community and take the next step in your career journey with confidence.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contactUs" class="policy-section py-16 bg-gray-50 hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Contact Us</h2>
+            <div class="max-w-3xl mx-auto text-gray-700 text-center">
+                <p class="mb-4">Have questions or need assistance? Our team is here to help!</p>
+                <p class="mb-2"><i class="fas fa-envelope mr-2 text-indigo-600"></i> Email: <a href="mailto:Sshukla87384@gmail.com" class="text-indigo-600 hover:underline">Sshukla87384@gmail.com</a></p>
+                <p class="mb-2"><i class="fas fa-phone-alt mr-2 text-indigo-600"></i> Phone: +91 9935330255</p>
+                <p class="mb-4"><i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i> Address: 123 Jobify Towers, Cyber City, Bengaluru, India</p>
+                <a href="https://wa.me/919935330255?text=Hello%2C%20I%20have%20a%20query%20regarding%20Jobify." target="_blank" class="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-green-600 transition-colors mt-4">
+                    <i class="fab fa-whatsapp text-xl mr-2"></i> Chat on WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="privacyPolicy" class="policy-section py-16 bg-white hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Privacy Policy</h2>
+            <div class="prose max-w-3xl mx-auto text-gray-700">
+                <p>Your privacy is important to us. This Privacy Policy explains how Jobify collects, uses, and protects your personal information when you use our website.</p>
+                <h3>Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, post a job, apply for a job, or subscribe to our newsletter. This may include your name, email address, contact number, resume, company details, and job descriptions.</p>
+                <h3>How We Use Your Information</h3>
+                <ul>
+                    <li>To provide and maintain our services.</li>
+                    <li>To personalize your experience and deliver relevant job listings or candidates.</li>
+                    <li>To communicate with you regarding your account, applications, or posted jobs.</li>
+                    <li>To improve our website and services.</li>
+                    <li>For security and fraud prevention.</li>
+                </ul>
+                <h3>Data Sharing and Disclosure</h3>
+                <p>We do not sell or rent your personal information to third parties. We may share your information with:</p>
+                <ul>
+                    <li>Employers (when you apply for a job).</li>
+                    <li>Service providers who assist us in operating the website (e.g., hosting, analytics).</li>
+                    <li>Law enforcement or government agencies if required by law.</li>
+                </ul>
+                <h3>Data Security</h3>
+                <p>We implement reasonable security measures to protect your information from unauthorized access, alteration, disclosure, or destruction. However, no internet transmission is entirely secure.</p>
+                <h3>Your Choices</h3>
+                <p>You can access, update, or delete your personal information through your account settings. You can also unsubscribe from our newsletter at any time.</p>
+                <h3>Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+                <p>Last updated: July 18, 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="termsAndConditions" class="policy-section py-16 bg-gray-50 hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Terms and Conditions</h2>
+            <div class="prose max-w-3xl mx-auto text-gray-700">
+                <p>Welcome to Jobify! These Terms and Conditions ("Terms") govern your use of the Jobify website and services. By accessing or using our platform, you agree to be bound by these Terms.</p>
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using Jobify, you agree to comply with and be legally bound by these Terms. If you do not agree to these Terms, you may not access or use the services.</p>
+                <h3>2. Eligibility</h3>
+                <p>You must be at least 18 years old to use our services. By using Jobify, you represent and warrant that you are at least 18 years old and have the legal capacity to enter into these Terms.</p>
+                <h3>3. User Accounts</h3>
+                <p>To access certain features, you may need to create an account. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account.</p>
+                <h3>4. Prohibited Conduct</h3>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Use the service for any unlawful purpose.</li>
+                    <li>Post false, inaccurate, misleading, or defamatory content.</li>
+                    <li>Interfere with the proper working of the service.</li>
+                    <li>Attempt to gain unauthorized access to any part of the service.</li>
+                </ul>
+                <h3>5. Content Ownership</h3>
+                <p>You retain ownership of any content you post on Jobify. By posting content, you grant Jobify a non-exclusive, worldwide, royalty-free license to use, reproduce, modify, and display such content in connection with the service.</p>
+                <h3>6. Disclaimers</h3>
+                <p>Jobify provides the service on an "as is" and "as available" basis. We do not warrant that the service will be uninterrupted, error-free, or secure.</p>
+                <h3>7. Limitation of Liability</h3>
+                <p>In no event shall Jobify be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the service.</p>
+                <h3>8. Governing Law</h3>
+                <p>These Terms shall be governed by and construed in accordance with the laws of India.</p>
+                <h3>9. Changes to Terms</h3>
+                <p>We reserve the right to modify these Terms at any time. Your continued use of the service after any such changes constitutes your acceptance of the new Terms.</p>
+                <p>Last updated: July 18, 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="jobPolicies" class="policy-section py-16 bg-white hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Job Posting Policies</h2>
+            <div class="prose max-w-3xl mx-auto text-gray-700">
+                <p>To ensure a fair and effective platform for all users, Jobify has established the following Job Posting Policies. By posting a job on our platform, you agree to adhere to these guidelines.</p>
+                <h3>1. Accurate and Complete Information</h3>
+                <p>All job postings must contain accurate, clear, and complete information regarding the job title, company name, location, salary range (if applicable), and detailed job description. Misleading or false information is strictly prohibited.</p>
+                <h3>2. Non-Discrimination</h3>
+                <p>Job postings must not discriminate against any individual based on race, color, religion, sex, national origin, age, disability, genetic information, or any other protected characteristic under applicable laws.</p>
+                <h3>3. Legitimate Job Opportunities</h3>
+                <p>Only legitimate and verifiable job opportunities are allowed. Postings for multi-level marketing (MLM) schemes, pyramid schemes, or any illegal activities are strictly forbidden.</p>
+                <h3>4. Unique Job Postings</h3>
+                <p>Each job posting should represent a unique job opening. Duplicate postings for the same position are not permitted.</p>
+                <h3>5. Contact Information</h3>
+                <p>While direct contact information may be provided for applications (e.g., email or WhatsApp), it must be professional and directly related to the job application process.</p>
+                <h3>6. Compliance with Laws</h3>
+                <p>All job postings must comply with all applicable local, state, and national laws and regulations related to employment and recruitment.</p>
+                <h3>7. Content Review</p>
+                <p>Jobify reserves the right to review, edit, or remove any job posting that violates these policies or is deemed inappropriate, at our sole discretion.</p>
+                <p>Last updated: July 18, 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="disclaimer" class="policy-section py-16 bg-gray-50 hidden">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Disclaimer</h2>
+            <div class="prose max-w-3xl mx-auto text-gray-700">
+                <p>The information provided on the Jobify website is for general informational purposes only. All information on the site is provided in good faith, however, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.</p>
+                <h3>External Links Disclaimer</h3>
+                <p>The Jobify website may contain links to other websites or content belonging to or originating from third parties. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability, or completeness by us.</p>
+                <p>We do not warrant, endorse, guarantee, or assume responsibility for the accuracy or reliability of any information offered by third-party websites linked through the site or any website or feature linked in any banner or other advertising. We will not be a party to or in any way be responsible for monitoring any transaction between you and third-party providers of products or services.</p>
+                <h3>Professional Advice Disclaimer</h3>
+                <p>The site cannot and does not contain employment or career advice. The information is provided for general informational and educational purposes only and is not a substitute for professional advice. Accordingly, before taking any actions based upon such information, we encourage you to consult with the appropriate professionals. We do not provide any kind of employment or career advice.</p>
+                <h3>Limitation of Liability</h3>
+                <p>Under no circumstance shall we have any liability to you for any loss or damage of any kind incurred as a result of the use of the site or reliance on any information provided on the site. Your use of the site and your reliance on any information on the site is solely at your own risk.</p>
+                <p>Last updated: July 18, 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Post a Job Modal -->
+    <div id="postJobModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden modal-overlay">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full mx-4 relative animate-fade-in">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Post a New Job</h2>
+            <form id="postJobForm" class="space-y-4">
+                <div>
+                    <label for="companyName" class="block text-sm font-medium text-gray-700">Company Name</label>
+                    <input type="text" id="companyName" name="companyName" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="jobTitle" class="block text-sm font-medium text-gray-700">Job Title</label>
+                    <input type="text" id="jobTitle" name="jobTitle" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Job Description</label>
+                    <textarea id="description" name="description" rows="4" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                    <input type="text" id="location" name="location" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="salary" class="block text-sm font-medium text-gray-700">Salary Range</label>
+                    <input type="text" id="salary" name="salary" placeholder="e.g., â‚¹5,00,000 - â‚¹8,00,000" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Contact Email</label>
+                    <input type="email" id="email" name="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <button type="submit" class="btn-primary w-full text-white px-4 py-3 rounded-md font-semibold shadow-md hover:shadow-lg transition-all duration-300">Post Job</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Company Info -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Jobify</h3>
+                <p class="text-sm">Your ultimate platform to find and post job opportunities worldwide.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="#hero" class="hover:text-white transition-colors footer-link" data-target-section="hero">Home</a></li>
+                    <li><a href="#jobs" class="hover:text-white transition-colors footer-link" data-target-section="jobs">Browse Jobs</a></li>
+                    <li><a href="#how-it-works" class="hover:text-white transition-colors footer-link" data-target-section="how-it-works">How It Works</a></li>
+                    <li><a href="#testimonials" class="hover:text-white transition-colors footer-link" data-target-section="testimonials">Testimonials</a></li>
+                    <li><a href="#blogs" class="hover:text-white transition-colors footer-link" data-target-section="blogs">Blogs</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal Links -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-4">Legal & Policies</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="aboutUs">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="contactUs">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="privacyPolicy">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="termsAndConditions">Terms & Conditions</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="jobPolicies">Job Policies</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors footer-link" data-target-section="disclaimer">Disclaimer</a></li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-4">Connect With Us</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-linkedin-in text-2xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-twitter text-2xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-facebook-f text-2xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram text-2xl"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+            &copy; 2025 Jobify. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="hidden">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <!-- Floating WhatsApp Channel Button -->
+    <a id="whatsappChannelBtn" href="https://wa.me/919935330255?text=Hello%2C%20I%20have%20a%20general%20query%20about%20Jobify." target="_blank">
+        <i class="fab fa-whatsapp text-2xl"></i>
+    </a>
+
+    <script>
+        // --- Global State and Data ---
+        let jobs = JSON.parse(localStorage.getItem('jobListings')) || [
+            {
+                id: 1,
+                title: "Senior Software Engineer",
+                company: "Innovate Solutions",
+                location: "Bengaluru",
+                salary: "â‚¹15,00,000 - â‚¹25,00,000",
+                category: "IT",
+                description: "Developing scalable web applications using React and Node.js for a leading tech firm."
+            },
+            {
+                id: 2,
+                title: "Marketing Manager",
+                company: "Brand Builders India",
+                location: "Mumbai",
+                salary: "â‚¹8,00,000 - â‚¹12,00,000",
+                category: "Marketing",
+                description: "Leading digital marketing campaigns and brand strategy for consumer products."
+            },
+            {
+                id: 3,
+                title: "Financial Analyst",
+                company: "Wealth Advisors Pvt Ltd",
+                location: "Delhi",
+                salary: "â‚¹6,00,000 - â‚¹9,00,000",
+                category: "Finance",
+                description: "Analyzing financial data, preparing reports, and assisting in investment decisions."
+            },
+            {
+                id: 4,
+                title: "Remote UI/UX Designer",
+                company: "Creative Digital Agency",
+                location: "Remote (India)",
+                salary: "â‚¹7,00,000 - â‚¹10,00,000",
+                category: "IT",
+                description: "Designing user-friendly interfaces and experiences for various web and mobile platforms."
+            },
+            {
+                id: 5,
+                title: "Sales Executive",
+                company: "Growth Accelerators",
+                location: "Hyderabad",
+                salary: "â‚¹4,00,000 - â‚¹7,00,000 + Incentives",
+                category: "Sales",
+                description: "Driving B2B sales, managing client relationships, and achieving sales targets."
+            },
+            {
+                id: 6,
+                title: "Registered Nurse",
+                company: "Apollo Hospitals",
+                location: "Chennai",
+                salary: "â‚¹3,50,000 - â‚¹5,00,000",
+                category: "Healthcare",
+                description: "Providing compassionate patient care and assisting doctors in a multi-specialty hospital."
+            },
+            {
+                id: 7,
+                title: "Data Scientist",
+                company: "Analytics Hub",
+                location: "Pune",
+                salary: "â‚¹10,00,000 - â‚¹18,00,000",
+                category: "IT",
+                description: "Building predictive models, performing data analysis, and deriving actionable insights."
+            },
+            {
+                id: 8,
+                title: "Product Manager",
+                company: "NextGen Technologies",
+                location: "Bengaluru",
+                salary: "â‚¹12,00,000 - â‚¹20,00,000",
+                category: "IT",
+                description: "Defining product vision, strategy, and roadmap, and overseeing product development lifecycle."
+            },
+        ];
+
+        const testimonials = [
+            {
+                id: 1,
+                avatar: "https://placehold.co/100x100/A78BFA/ffffff?text=JD",
+                name: "Jaya Devi",
+                feedback: "Jobify helped me land my dream job in just a few weeks! The interface is intuitive and the job listings are highly relevant. Highly recommend!",
+                company: "Innovate Solutions"
+            },
+            {
+                id: 2,
+                avatar: "https://placehold.co/100x100/FDBA74/ffffff?text=AS",
+                name: "Amit Sharma",
+                feedback: "As a recruiter, posting jobs on Jobify is incredibly easy. We get high-quality applications and have filled several key positions through the platform.",
+                company: "Brand Builders India"
+            },
+            {
+                id: 3,
+                avatar: "https://placehold.co/100x100/6EE7B7/ffffff?text=EM",
+                name: "Esha Malik",
+                feedback: "The 'How It Works' section was super helpful for a first-time job seeker like me. The entire process was smooth and stress-free.",
+                company: "Creative Digital Agency"
+            },
+            {
+                id: 4,
+                avatar: "https://placehold.co/100x100/94A3B8/ffffff?text=RS",
+                name: "Rahul Singh",
+                feedback: "I appreciate the detailed job descriptions and salary ranges. It saved me a lot of time during my job search. Fantastic platform!",
+                company: "Analytics Hub"
+            }
+        ];
+
+        let currentTestimonialIndex = 0;
+        let messageBoxTimeout; // To manage the timeout for the message box
+
+        // --- DOM Elements ---
+        const mainContentDiv = document.getElementById('mainContent');
+        const policySections = document.querySelectorAll('.policy-section');
+        const jobListingsContainer = document.getElementById('jobListings');
+        const noJobsFoundMessage = document.getElementById('noJobsFound');
+        const jobTitleSearchInput = document.getElementById('jobTitleSearch');
+        const locationFilterSelect = document.getElementById('locationFilter');
+        const categoryFilterSelect = document.getElementById('categoryFilter');
+        const searchJobsBtn = document.getElementById('searchJobsBtn');
+
+        const postJobModal = document.getElementById('postJobModal');
+        const postJobBtnHero = document.getElementById('postJobBtnHero');
+        const postJobBtnNav = document.getElementById('postJobBtnNav');
+        const postJobBtnMobile = document.getElementById('postJobBtnMobile');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const postJobForm = document.getElementById('postJobForm');
+
+        const testimonialContainer = document.getElementById('testimonialContainer');
+        const prevTestimonialBtn = document.getElementById('prevTestimonial');
+        const nextTestimonialBtn = document.getElementById('nextTestimonial');
+
+        const newsletterEmailInput = document.getElementById('newsletterEmail');
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        const newsletterMessage = document.getElementById('newsletterMessage');
+
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        // --- Functions ---
+
+        /**
+         * Displays a custom message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success' or 'error').
+         */
+        function showMessage(message, type) {
+            clearTimeout(messageBoxTimeout); // Clear any existing timeout
+            messageBox.classList.remove('hidden', 'success', 'error'); // Reset classes
+            messageBox.classList.add(type);
+            messageText.textContent = message;
+            messageBox.classList.add('show'); // Make it visible
+
+            // Hide after 3 seconds
+            messageBoxTimeout = setTimeout(() => {
+                messageBox.classList.remove('show');
+                // Use a small delay before hiding completely to allow transition
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, 300);
+            }, 3000);
+        }
+
+        /**
+         * Renders the job listings based on the provided jobs array.
+         * @param {Array} jobsToRender - The array of job objects to display.
+         */
+        function renderJobListings(jobsToRender) {
+            jobListingsContainer.innerHTML = ''; // Clear existing listings
+            if (jobsToRender.length === 0) {
+                noJobsFoundMessage.classList.remove('hidden');
+            } else {
+                noJobsFoundMessage.classList.add('hidden');
+                jobsToRender.forEach(job => {
+                    const jobCard = `
+                        <div class="bg-white p-6 rounded-xl shadow-md job-card-3d-effect relative overflow-hidden">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">${job.title}</h3>
+                            <p class="text-indigo-600 font-medium mb-1">${job.company}</p>
+                            <p class="text-gray-600 text-sm mb-3"><i class="fas fa-map-marker-alt mr-2"></i>${job.location}</p>
+                            <p class="text-gray-700 font-semibold mb-4">Salary: ${job.salary}</p>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-3">${job.description}</p>
+                            <button class="apply-now-btn btn-primary text-white px-5 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition-all duration-300" data-job-id="${job.id}">
+                                Apply Now
+                            </button>
+                            <span class="absolute top-0 right-0 bg-indigo-100 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-bl-lg">${job.category}</span>
+                        </div>
+                    `;
+                    jobListingsContainer.insertAdjacentHTML('beforeend', jobCard);
+                });
+                // Attach event listeners to newly rendered "Apply Now" buttons
+                document.querySelectorAll('.apply-now-btn').forEach(button => {
+                    button.addEventListener('click', handleApplyNow);
+                });
+            }
+        }
+
+        /**
+         * Filters the global jobs array based on search input and dropdowns.
+         * Rerenders the job listings.
+         */
+        function filterJobs() {
+            const searchTerm = jobTitleSearchInput.value.toLowerCase();
+            const selectedLocation = locationFilterSelect.value;
+            const selectedCategory = categoryFilterSelect.value;
+
+            const filteredJobs = jobs.filter(job => {
+                const matchesTitle = job.title.toLowerCase().includes(searchTerm) ||
+                                     job.company.toLowerCase().includes(searchTerm) ||
+                                     job.description.toLowerCase().includes(searchTerm);
+                const matchesLocation = selectedLocation === "" || job.location.includes(selectedLocation);
+                const matchesCategory = selectedCategory === "" || job.category === selectedCategory;
+
+                return matchesTitle && matchesLocation && matchesCategory;
+            });
+
+            renderJobListings(filteredJobs);
+        }
+
+        /**
+         * Opens the Post a Job modal.
+         */
+        function openPostJobModal() {
+            postJobModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden'); // Prevent scrolling body when modal is open
+            mainContentDiv.classList.add('hidden'); // Hide main content
+            policySections.forEach(section => section.classList.add('hidden')); // Hide policy sections
+        }
+
+        /**
+         * Closes the Post a Job modal.
+         */
+        function closePostJobModal() {
+            postJobModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden'); // Re-enable body scrolling
+            postJobForm.reset(); // Clear form fields
+            mainContentDiv.classList.remove('hidden'); // Show main content
+        }
+
+        /**
+         * Handles the submission of the post job form.
+         * Saves the new job to the jobs array and localStorage.
+         * @param {Event} event - The form submission event.
+         */
+        function handlePostJob(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const newJob = {
+                id: jobs.length > 0 ? Math.max(...jobs.map(j => j.id)) + 1 : 1, // Simple ID generation
+                title: document.getElementById('jobTitle').value,
+                company: document.getElementById('companyName').value,
+                description: document.getElementById('description').value,
+                location: document.getElementById('location').value,
+                salary: document.getElementById('salary').value || "Negotiable",
+                category: "Other", // Default category for new posts, could add a dropdown in modal
+                contactEmail: document.getElementById('email').value
+            };
+
+            // Basic validation
+            if (!newJob.title || !newJob.company || !newJob.description || !newJob.location || !newJob.contactEmail) {
+                showMessage("Please fill in all required fields.", "error");
+                return;
+            }
+
+            jobs.push(newJob);
+            localStorage.setItem('jobListings', JSON.stringify(jobs)); // Save to localStorage
+            renderJobListings(jobs); // Re-render all jobs including the new one
+            closePostJobModal(); // Close the modal
+            showMessage("Your job has been posted successfully!", "success"); // Custom confirmation
+        }
+
+        /**
+         * Handles the click on an "Apply Now" button.
+         * @param {Event} event - The click event.
+         */
+        function handleApplyNow(event) {
+            const jobId = event.target.dataset.jobId;
+            const job = jobs.find(j => j.id == jobId); // Find the job by ID
+            const whatsappNumber = "919935330255"; // Indian number with country code
+
+            if (job) {
+                const message = `Hello, I'm interested in the "${job.title}" position at ${job.company}.\n\nJob Details:\nLocation: ${job.location}\nSalary: ${job.salary}\nDescription: ${job.description}\n\nPlease provide more information.`;
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+                window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
+                showMessage(`Redirecting to WhatsApp for "${job.title}" application!`, "success");
+            } else {
+                showMessage("Could not find job details for application.", "error");
+            }
+        }
+
+        /**
+         * Renders the testimonials in the carousel.
+         */
+        function renderTestimonials() {
+            testimonialContainer.innerHTML = '';
+            testimonials.forEach(testimonial => {
+                const testimonialCard = `
+                    <div class="w-full flex-shrink-0 p-4 text-center">
+                        <img src="${testimonial.avatar}" alt="${testimonial.name}'s avatar" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-200 shadow-md">
+                        <p class="text-lg italic text-gray-700 mb-4">"${testimonial.feedback}"</p>
+                        <p class="font-semibold text-gray-900">${testimonial.name}</p>
+                        <p class="text-sm text-gray-500">${testimonial.company}</p>
+                    </div>
+                `;
+                testimonialContainer.insertAdjacentHTML('beforeend', testimonialCard);
+            });
+            updateTestimonialCarousel();
+        }
+
+        /**
+         * Updates the carousel position based on currentTestimonialIndex.
+         */
+        function updateTestimonialCarousel() {
+            if (testimonialContainer.children.length > 0) {
+                const testimonialWidth = testimonialContainer.children[0].offsetWidth;
+                const offset = -currentTestimonialIndex * testimonialWidth;
+                testimonialContainer.style.transform = `translateX(${offset}px)`;
+            }
+        }
+
+        /**
+         * Navigates to the previous testimonial.
+         */
+        function showPrevTestimonial() {
+            currentTestimonialIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+            updateTestimonialCarousel();
+        }
+
+        /**
+         * Navigates to the next testimonial.
+         */
+        function showNextTestimonial() {
+            currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonials.length;
+            updateTestimonialCarousel();
+        }
+
+        /**
+         * Validates the email format for the newsletter subscription.
+         * @param {string} email - The email string to validate.
+         * @returns {boolean} True if email is valid, false otherwise.
+         */
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        /**
+         * Handles newsletter subscription.
+         */
+        function handleNewsletterSubscription() {
+            const email = newsletterEmailInput.value;
+            if (validateEmail(email)) {
+                newsletterMessage.textContent = ""; // Clear previous message
+                newsletterMessage.classList.remove('text-red-400');
+                newsletterMessage.classList.add('text-green-300');
+                showMessage("Thank you for subscribing!", "success");
+                newsletterEmailInput.value = ''; // Clear input
+            } else {
+                newsletterMessage.textContent = ""; // Clear previous message
+                newsletterMessage.classList.remove('text-green-300');
+                newsletterMessage.classList.add('text-red-400');
+                showMessage("Please enter a valid email address.", "error");
+            }
+        }
+
+        /**
+         * Sets up IntersectionObserver for scroll animations.
+         */
+        function setupScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-up');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        // Optional: remove 'is-visible' if you want elements to animate again on scroll up
+                        // entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1, // Trigger when 10% of the element is visible
+                rootMargin: "0px"
+            });
+
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        /**
+         * Shows a specific policy section and hides all main content and other policy sections.
+         * @param {string} sectionId - The ID of the section to show.
+         */
+        function showPolicySection(sectionId) {
+            // Hide main content
+            mainContentDiv.classList.add('hidden');
+
+            // Hide all policy sections
+            policySections.forEach(section => {
+                section.classList.remove('active');
+                section.classList.add('hidden');
+            });
+
+            // Show the target policy section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the new section
+            }
+        }
+
+        /**
+         * Shows the main content and hides all policy sections.
+         */
+        function showMainContent() {
+            mainContentDiv.classList.remove('hidden');
+            policySections.forEach(section => {
+                section.classList.remove('active');
+                section.classList.add('hidden');
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of main content
+        }
+
+        // --- Event Listeners ---
+        window.addEventListener('load', () => {
+            renderJobListings(jobs); // Initial render of all jobs
+            renderTestimonials(); // Initial render of testimonials
+            setupScrollAnimations(); // Setup scroll animations
+        });
+
+        // Event listener for scroll to show/hide back-to-top button
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show button after scrolling 300px
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        // Event listener for back-to-top button click
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Search & Filter
+        searchJobsBtn.addEventListener('click', filterJobs);
+        jobTitleSearchInput.addEventListener('keyup', filterJobs); // Real-time filtering
+        locationFilterSelect.addEventListener('change', filterJobs); // Real-time filtering
+        categoryFilterSelect.addEventListener('change', filterJobs); // Real-time filtering
+
+        // Post a Job Modal
+        postJobBtnHero.addEventListener('click', openPostJobModal);
+        postJobBtnNav.addEventListener('click', openPostJobModal);
+        postJobBtnMobile.addEventListener('click', openPostJobModal);
+        closeModalBtn.addEventListener('click', closePostJobModal);
+        postJobModal.addEventListener('click', (e) => {
+            // Close modal if clicked outside the content (on the overlay)
+            if (e.target === postJobModal) {
+                closePostJobModal();
+            }
+        });
+        postJobForm.addEventListener('submit', handlePostJob);
+ 
+        // Testimonial Carousel
+        prevTestimonialBtn.addEventListener('click', showPrevTestimonial);
+        nextTestimonialBtn.addEventListener('click', showNextTestimonial);
+        // Recalculate testimonial carousel position on window resize
+        window.addEventListener('resize', updateTestimonialCarousel);
+
+        // Newsletter
+        subscribeBtn.addEventListener('click', handleNewsletterSubscription);
+
+        // Mobile Menu Toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll('a, button').forEach(item => {
+            item.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Handle navigation links for main sections
+        document.querySelectorAll('.main-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMainContent(); // Ensure main content is visible
+                const targetId = e.target.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Handle footer links for policy sections
+        document.querySelectorAll('.footer-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetSectionId = e.target.dataset.targetSection;
+                if (targetSectionId) {
+                    showPolicySection(targetSectionId);
+                }
+            });
+        });
+
+        // Make sure the main content is visible initially if no specific policy section is requested
+        window.addEventListener('hashchange', () => {
+            if (!window.location.hash || !document.getElementById(window.location.hash.substring(1))?.classList.contains('policy-section')) {
+                showMainContent();
+            }
+        });
+
+        // Initial check for hash on load to display policy page if linked directly
+        if (window.location.hash && document.getElementById(window.location.hash.substring(1))?.classList.contains('policy-section')) {
+            showPolicySection(window.location.hash.substring(1));
+        } else {
+            showMainContent(); // Default to showing main content
+        }
+    </script>
+</body>
+</html>
